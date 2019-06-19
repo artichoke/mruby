@@ -4945,6 +4945,8 @@ parse_string(parser_state *p)
       case 'x': f |= 2; break;
       case 'm': f |= 4; break;
       case 'u': f |= 16; break;
+      case 'e': f |= 16; break;
+      case 's': f |= 16; break;
       case 'n': f |= 32; break;
       case 'o': break;
       default: tokadd(p, re_opt); break;
