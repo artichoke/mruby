@@ -5,6 +5,7 @@
 */
 
 #include <stdarg.h>
+#include <stdlib.h>
 #include <mruby.h>
 #include <mruby/array.h>
 #include <mruby/hash.h>
@@ -17,6 +18,10 @@
 #include <mruby/data.h>
 #include <mruby/istruct.h>
 #include <mruby/opcode.h>
+
+#ifdef ARTICHOKE
+#include <mruby-sys/artichoke.h>
+#endif
 
 KHASH_DEFINE(mt, mrb_sym, mrb_method_t, TRUE, kh_int_hash_func, kh_int_hash_equal)
 
@@ -528,9 +533,7 @@ mrb_get_argc(mrb_state *mrb)
   mrb_int argc = mrb->c->ci->argc;
 
   if (argc < 0) {
-    struct RArray *a = mrb_ary_ptr(mrb->c->stack[1]);
-
-    argc = ARY_LEN(a);
+    argc = ARRAY_LEN(mrb, mrb->c->stack[1]);
   }
   return argc;
 }
@@ -541,9 +544,7 @@ mrb_get_argv(mrb_state *mrb)
   mrb_int argc = mrb->c->ci->argc;
   mrb_value *array_argv;
   if (argc < 0) {
-    struct RArray *a = mrb_ary_ptr(mrb->c->stack[1]);
-
-    array_argv = ARY_PTR(a);
+    array_argv = ARRAY_PTR(mrb, mrb->c->stack[1]);
   }
   else {
     array_argv = NULL;
@@ -1003,7 +1004,7 @@ mrb_get_args(mrb_state *mrb, const char *format, ...)
         }
         else if (!mrb_hash_empty_p(mrb, ksrc)) {
           ksrc = mrb_hash_keys(mrb, ksrc);
-          ksrc = RARRAY_PTR(ksrc)[0];
+          ksrc = ARY_REF(mrb, ksrc, 0);
           mrb_raisef(mrb, E_ARGUMENT_ERROR, "unknown keyword: %v", ksrc);
         }
       }
@@ -1209,13 +1210,13 @@ mrb_mod_ancestors(mrb_state *mrb, mrb_value self)
 {
   mrb_value result;
   struct RClass *c = mrb_class_ptr(self);
-  result = mrb_ary_new(mrb);
+  result = ARY_NEW(mrb);
   while (c) {
     if (c->tt == MRB_TT_ICLASS) {
-      mrb_ary_push(mrb, result, mrb_obj_value(c->c));
+      ARY_PUSH(mrb, result, mrb_obj_value(c->c));
     }
     else if (!(c->flags & MRB_FL_CLASS_IS_PREPENDED)) {
-      mrb_ary_push(mrb, result, mrb_obj_value(c));
+      ARY_PUSH(mrb, result, mrb_obj_value(c));
     }
     c = c->super;
   }

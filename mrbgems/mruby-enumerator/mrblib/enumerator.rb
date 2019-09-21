@@ -114,10 +114,10 @@ class Enumerator
   #
   # Use of this form is discouraged.  Use Kernel#enum_for or Kernel#to_enum
   # instead.
-  def initialize(obj=NONE, meth=:each, *args, &block)
+  def initialize(obj = (not_set = true), meth=:each, *args, &block)
     if block
       obj = Generator.new(&block)
-    elsif obj == NONE
+    elsif not_set
       raise ArgumentError, "wrong number of arguments (given 0, expected 1+)"
     end
 
