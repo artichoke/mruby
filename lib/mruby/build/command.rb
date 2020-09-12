@@ -1,4 +1,5 @@
 require 'forwardable'
+require 'shellwords'
 
 module MRuby
   class Command
@@ -36,6 +37,7 @@ module MRuby
 
     private
     def _run(options, params={})
+      params = params.each_pair.map {|k, v| [k, v.shellescape]}.to_h
       return sh command + ' ' + ( options % params ) if NotFoundCommands.key? @command
       begin
         sh build.filename(command) + ' ' + ( options % params )
