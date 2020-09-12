@@ -7,6 +7,8 @@ MRuby.each_target do
   self.libmruby_objs << objfile(src.ext)
 
   file src => [mrbcfile, __FILE__, *rbfiles] do |t|
+    next # Disabled by Artichoke build
+
     if presym_enabled?
       cdump = true
       suffix = "proc"

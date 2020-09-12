@@ -193,7 +193,7 @@ module MRuby
         _pp "GEN", fname.relative_path
         open(fname, 'w') do |f|
           print_gem_init_header f
-          unless rbfiles.empty?
+          unless rbfiles.empty? || true # Disabled by Artichoke build
             if cdump?
               build.mrbc.run f, rbfiles, "gem_mrblib_#{funcname}_proc"
             else
@@ -207,7 +207,7 @@ module MRuby
           f.puts %Q[  int ai = mrb_gc_arena_save(mrb);]
           f.puts %Q[  gem_mrblib_#{funcname}_proc_init_syms(mrb);] if !rbfiles.empty? && cdump?
           f.puts %Q[  mrb_#{funcname}_gem_init(mrb);] if objs != [objfile("#{build_dir}/gem_init")]
-          unless rbfiles.empty?
+          unless rbfiles.empty? || true # Disabled by Artichoke build
             if cdump?
               f.puts %Q[  mrb_load_proc(mrb, gem_mrblib_#{funcname}_proc);]
             else
