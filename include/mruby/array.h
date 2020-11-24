@@ -299,6 +299,12 @@ MRB_API mrb_value mrb_ary_resize(mrb_state *mrb, mrb_value ary, mrb_int new_len)
 /* helper functions */
 mrb_value mrb_ary_subseq(mrb_state *mrb, mrb_value ary, mrb_int beg, mrb_int len);
 
+#ifdef ARTICHOKE
+
+MRB_API void mrb_ary_artichoke_free(mrb_state *mrb, struct RArray *ary);
+
+#endif
+
 MRB_END_DECL
 
 #endif  /* MRUBY_ARRAY_H */

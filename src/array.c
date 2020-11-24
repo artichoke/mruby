@@ -18,6 +18,8 @@
 #define ARY_C_MAX_SIZE (SIZE_MAX / sizeof(mrb_value))
 #define ARY_MAX_SIZE ((mrb_int)((ARY_C_MAX_SIZE < (size_t)MRB_INT_MAX) ? ARY_C_MAX_SIZE : MRB_INT_MAX-1))
 
+#ifndef ARTICHOKE
+
 static struct RArray*
 ary_new_capa(mrb_state *mrb, mrb_int capa)
 {
@@ -1322,6 +1324,8 @@ mrb_ary_svalue(mrb_state *mrb, mrb_value ary)
   }
 }
 
+#endif
+
 void
 mrb_init_array(mrb_state *mrb)
 {
@@ -1330,6 +1334,7 @@ mrb_init_array(mrb_state *mrb)
   mrb->array_class = a = mrb_define_class(mrb, "Array", mrb->object_class);              /* 15.2.12 */
   MRB_SET_INSTANCE_TT(a, MRB_TT_ARRAY);
 
+#ifndef ARTICHOKE
   mrb_define_class_method(mrb, a, "[]",        mrb_ary_s_create,     MRB_ARGS_ANY());    /* 15.2.12.4.1 */
 
   mrb_define_method(mrb, a, "+",               mrb_ary_plus,         MRB_ARGS_REQ(1));   /* 15.2.12.5.1  */
@@ -1362,4 +1367,5 @@ mrb_init_array(mrb_state *mrb)
   mrb_define_method(mrb, a, "__ary_cmp",       mrb_ary_cmp,          MRB_ARGS_REQ(1));
   mrb_define_method(mrb, a, "__ary_index",     mrb_ary_index_m,      MRB_ARGS_REQ(1));   /* kept for mruby-array-ext */
   mrb_define_method(mrb, a, "__svalue",        mrb_ary_svalue,       MRB_ARGS_NONE());
+#endif
 }

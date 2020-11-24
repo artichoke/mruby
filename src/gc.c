@@ -846,10 +846,14 @@ obj_free(mrb_state *mrb, struct RBasic *obj, int end)
 
   case MRB_TT_STRUCT:
   case MRB_TT_ARRAY:
+#ifdef ARTICHOKE
+    mrb_ary_artichoke_free(mrb, (struct RArray*)obj);
+#else
     if (ARY_SHARED_P(obj))
       mrb_ary_decref(mrb, ((struct RArray*)obj)->as.heap.aux.shared);
     else if (!ARY_EMBED_P(obj))
       mrb_free(mrb, ((struct RArray*)obj)->as.heap.ptr);
+#endif
     break;
 
   case MRB_TT_HASH:
