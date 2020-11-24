@@ -52,6 +52,8 @@ presym_sym2name(mrb_sym sym, mrb_int *lenp)
 
 #endif  /* MRB_NO_PRESYM */
 
+#ifndef ARTICHOKE
+
 /* ------------------------------------------------------ */
 static void
 sym_validate_len(mrb_state *mrb, size_t len)
@@ -720,3 +722,17 @@ mrb_init_symbol(mrb_state *mrb)
   mrb_define_method(mrb, sym, "inspect", sym_inspect, MRB_ARGS_NONE());          /* 15.2.11.3.5(x) */
   mrb_define_method(mrb, sym, "<=>",     sym_cmp,     MRB_ARGS_REQ(1));
 }
+
+#else
+
+void
+mrb_init_symbol(mrb_state *mrb)
+{
+  struct RClass *sym;
+
+  mrb->symbol_class = sym = mrb_define_class(mrb, "Symbol", mrb->object_class);  /* 15.2.11 */
+  MRB_SET_INSTANCE_TT(sym, MRB_TT_SYMBOL);
+  mrb_undef_class_method(mrb,  sym, "new");
+}
+
+#endif
