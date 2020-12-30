@@ -11637,19 +11637,22 @@ parse_string(parser_state *p)
     int f = 0;
     int re_opt;
     char *s = strndup(tok(p), toklen(p));
-    char flags[3];
+    char flags[4];
     char *flag = flags;
     char enc = '\0';
     char *encp;
     char *dup;
 
     newtok(p);
+    f |= 128; // literal
     while (re_opt = nextc(p), re_opt >= 0 && ISALPHA(re_opt)) {
       switch (re_opt) {
       case 'i': f |= 1; break;
       case 'x': f |= 2; break;
       case 'm': f |= 4; break;
       case 'u': f |= 16; break;
+      case 'e': f |= 16; break;
+      case 's': f |= 16; break;
       case 'n': f |= 32; break;
       case 'o': break;
       default: tokadd(p, re_opt); break;
@@ -11674,6 +11677,7 @@ parse_string(parser_state *p)
       if (f & 4) *flag++ = 'm';
       if (f & 16) enc = 'u';
       if (f & 32) enc = 'n';
+      if (f & 128) *flag++ = 'l';
     }
     if (flag > flags) {
       dup = strndup(flags, (size_t)(flag - flags));
