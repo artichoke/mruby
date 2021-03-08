@@ -32,6 +32,7 @@
 #endif
 #endif
 
+#ifndef ARTICHOKE
 #ifndef MRB_NO_FLOAT
 MRB_API mrb_float
 mrb_to_flo(mrb_state *mrb, mrb_value val)
@@ -51,6 +52,7 @@ mrb_to_flo(mrb_state *mrb, mrb_value val)
   }
   return mrb_float(val);
 }
+#endif
 #endif
 
 static void
