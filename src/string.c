@@ -18,6 +18,8 @@
 #include <mruby/presym.h>
 #include <string.h>
 
+#ifndef ARTICHOKE
+
 typedef struct mrb_shared_string {
   int refcnt;
   mrb_int capa;
@@ -2944,6 +2946,7 @@ sub_replace(mrb_state *mrb, mrb_value self)
   }
   return result;
 }
+#endif
 
 /* ---------------------------*/
 void
@@ -2951,12 +2954,15 @@ mrb_init_string(mrb_state *mrb)
 {
   struct RClass *s;
 
+#ifndef ARTICHOKE
   mrb_static_assert(RSTRING_EMBED_LEN_MAX < (1 << MRB_STR_EMBED_LEN_BIT),
                     "pointer size too big for embedded string");
+#endif
 
   mrb->string_class = s = mrb_define_class(mrb, "String", mrb->object_class);             /* 15.2.10 */
   MRB_SET_INSTANCE_TT(s, MRB_TT_STRING);
 
+#ifndef ARTICHOKE
   mrb_define_method(mrb, s, "bytesize",        mrb_str_bytesize,        MRB_ARGS_NONE());
 
   mrb_define_method(mrb, s, "<=>",             mrb_str_cmp_m,           MRB_ARGS_REQ(1)); /* 15.2.10.5.1  */
@@ -3010,4 +3016,5 @@ mrb_init_string(mrb_state *mrb)
   mrb_define_method(mrb, s, "byteslice",       mrb_str_byteslice,       MRB_ARGS_ARG(1,1));
 
   mrb_define_method(mrb, s, "__sub_replace",   sub_replace,             MRB_ARGS_REQ(3)); /* internal */
+#endif
 }
